@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -27,17 +28,11 @@ class _LoginScreenState extends State<LoginScreen>
       vsync: this,
       duration: const Duration(milliseconds: 700),
     );
-    _fadeAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeIn,
-    );
+    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.2),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
   }
 
@@ -66,16 +61,27 @@ class _LoginScreenState extends State<LoginScreen>
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
+
+    final prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getString('email');
+    final savedPassword = prefs.getString('password');
+
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
     await Future.delayed(const Duration(seconds: 1));
     setState(() => _isLoading = false);
 
-    final email = _emailController.text.trim();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Logado como $email')),
-    );
-    
-    Navigator.pushReplacementNamed(context, '/home');
+    if (email == savedEmail && password == savedPassword) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Logado como $email')));
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('E-mail ou senha incorretos')),
+      );
+    }
   }
 
   @override
@@ -88,7 +94,9 @@ class _LoginScreenState extends State<LoginScreen>
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: isWide ? 500 : double.infinity),
+            constraints: BoxConstraints(
+              maxWidth: isWide ? 500 : double.infinity,
+            ),
             child: FadeTransition(
               opacity: _fadeAnimation,
               child: SlideTransition(
@@ -134,9 +142,11 @@ class _LoginScreenState extends State<LoginScreen>
                               prefixIcon: const Icon(Icons.lock_outline),
                               border: const OutlineInputBorder(),
                               suffixIcon: IconButton(
-                                icon: Icon(_obscure
-                                    ? Icons.visibility
-                                    : Icons.visibility_off),
+                                icon: Icon(
+                                  _obscure
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
                                 onPressed: () =>
                                     setState(() => _obscure = !_obscure),
                               ),
@@ -153,8 +163,10 @@ class _LoginScreenState extends State<LoginScreen>
                                 onPressed: () {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                        content: Text(
-                                            'Recuperação de senha não implementada')),
+                                      content: Text(
+                                        'Recuperação de senha não implementada',
+                                      ),
+                                    ),
                                   );
                                 },
                                 child: const Text('Esqueci a senha'),
@@ -169,8 +181,9 @@ class _LoginScreenState extends State<LoginScreen>
                             child: ElevatedButton(
                               onPressed: _isLoading ? null : _tryLogin,
                               style: ElevatedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 14.0),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14.0,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -180,7 +193,8 @@ class _LoginScreenState extends State<LoginScreen>
                                       height: 18,
                                       width: 18,
                                       child: CircularProgressIndicator(
-                                          strokeWidth: 2),
+                                        strokeWidth: 2,
+                                      ),
                                     )
                                   : const Text(
                                       'Entrar',
