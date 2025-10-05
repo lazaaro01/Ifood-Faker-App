@@ -8,19 +8,49 @@ class HomeScreen extends StatelessWidget {
       "name": "Pizzaria do Zé",
       "category": "Pizza",
       "rating": 4.8,
-      "image": "https://images.unsplash.com/photo-1594007654729-407eedc4be65"
+      "image": "https://images.unsplash.com/photo-1594007654729-407eedc4be65",
     },
     {
       "name": "Burger House",
       "category": "Hambúrguer",
       "rating": 4.5,
-      "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd"
+      "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd",
     },
     {
       "name": "Sushi Master",
       "category": "Japonês",
       "rating": 4.9,
-      "image": "https://images.unsplash.com/photo-1553621042-f6e147245754"
+      "image": "https://images.unsplash.com/photo-1553621042-f6e147245754",
+    },
+    {
+      "name": "Taco Loco",
+      "category": "Mexicano",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1600891964599-f61ba0e24092",
+    },
+    {
+      "name": "Bistro Francês",
+      "category": "Francês",
+      "rating": 4.4,
+      "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836",
+    },
+    {
+      "name": "Churrascaria Gaúcha",
+      "category": "Churrasco",
+      "rating": 4.8,
+      "image": "https://images.unsplash.com/photo-1551183053-bf91a1d81141",
+    },
+    {
+      "name": "Café Central",
+      "category": "Café",
+      "rating": 4.3,
+      "image": "https://images.unsplash.com/photo-1509042239860-f550ce710b93",
+    },
+    {
+      "name": "Padaria do Bairro",
+      "category": "Padaria",
+      "rating": 4.6,
+      "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591",
     },
   ];
 
@@ -29,12 +59,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("iFood Fake"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {},
-          )
-        ],
+        actions: [IconButton(icon: const Icon(Icons.search), onPressed: () {})],
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(12),
@@ -86,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -118,7 +143,12 @@ class RestaurantScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.network(image, height: 200, width: double.infinity, fit: BoxFit.cover),
+          Image.network(
+            image,
+            height: 200,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -136,21 +166,85 @@ class RestaurantScreen extends StatelessWidget {
           ),
           Expanded(
             child: ListView(
-              children: const [
+              children: [
                 ListTile(
-                  leading: Icon(Icons.fastfood),
-                  title: Text("Pizza de Calabresa"),
-                  subtitle: Text("R\$ 30,00"),
+                  leading: const Icon(Icons.fastfood),
+                  title: const Text("Pizza de Calabresa"),
+                  subtitle: const Text("R\$ 30,00"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => FeedbackScreen(
+                          dishName: "Pizza de Calabresa",
+                          feedbacks: const [
+                            "Deliciosa! Melhor pizza que já comi.",
+                            "Muito saborosa, mas poderia ter mais recheio.",
+                            "Entrega rápida e pizza quentinha!",
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 ListTile(
-                  leading: Icon(Icons.fastfood),
-                  title: Text("Pizza de Queijo"),
-                  subtitle: Text("R\$ 28,00"),
+                  leading: const Icon(Icons.fastfood),
+                  title: const Text("Pizza de Queijo"),
+                  subtitle: const Text("R\$ 28,00"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => FeedbackScreen(
+                          dishName: "Pizza de Queijo",
+                          feedbacks: const [
+                            "Queijo derretido na medida certa!",
+                            "Muito boa, mas achei um pouco salgada.",
+                            "Ótima opção para quem ama queijo.",
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
-          )
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class FeedbackScreen extends StatelessWidget {
+  final String dishName;
+  final List<String> feedbacks;
+
+  const FeedbackScreen({
+    super.key,
+    required this.dishName,
+    required this.feedbacks,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Feedbacks - $dishName")),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: feedbacks.length,
+        itemBuilder: (context, index) {
+          return Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text(
+                feedbacks[index],
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
